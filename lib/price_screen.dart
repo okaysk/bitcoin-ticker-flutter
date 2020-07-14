@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform; // only using Platform in the dart:io
+// import 'dart:io' hide Platform; // only not using Platform in the dart:io
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -8,34 +10,48 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  // String selectedCurrency = 'USD';
+  String selectedCurrency = 'USD';
 
-  // List<DropdownMenuItem> getDropdownItems() {
-  //   List<DropdownMenuItem<String>> dropdownItems = [];
-  //   for (String currency in currenciesList) {
-  //     var newItem = DropdownMenuItem(
-  //       child: Text(currency),
-  //       value: currency,
-  //     );
+  DropdownButton<String> androidDropdown() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        child: Text(currency),
+        value: currency,
+      );
+      dropdownItems.add(newItem);
+    }
 
-  //     dropdownItems.add(newItem);
-  //   }
+    return DropdownButton<String>(
+      value: selectedCurrency, //default value to show
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value;
+        });
+        print(selectedCurrency);
+      },
+    );
+  }
 
-  //   return dropdownItems;
-  // }
-
-  List<Text> getPickerItems() {
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = []; // 꼭 []; 빈 리스트를 만들어줘야 돼. 걍 pickteritems; 만 하면 안됨
     for (String currency in currenciesList) {
       pickerItems.add(Text(currency));
     }
-    return pickerItems;
+
+    return CupertinoPicker(
+      // backgroundColor: Colors.lightblue,
+      itemExtent: 32.0,
+      onSelectedItemChanged: (selectedIndex) {
+        print(selectedIndex);
+      },
+      children: pickerItems,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    getPickerItems();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -70,33 +86,11 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              // backgroundColor: Colors.lightblue,
-              itemExtent: 32.0,
-              onSelectedItemChanged: (selectedIndex) {
-                print(selectedIndex);
-              },
-              children: getPickerItems(),
-              // [
-              //   Text('USD'),
-              //   Text('EUR'),
-              //   Text('GBP'),
-              // ],
-            ),
+            // child: androidDropdown(),
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(), //ternary
           ),
         ],
       ),
     );
   }
 }
-
-// DropdownButton<String>(
-//               value: selectedCurrency, //default value to show
-//               items: getDropdownItems(),
-//               onChanged: (value) {
-//                 setState(() {
-//                   selectedCurrency = value;
-//                 });
-//                 print(selectedCurrency);
-//               },
-//             ),
