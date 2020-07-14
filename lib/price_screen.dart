@@ -10,7 +10,16 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  String selectedCurrency = 'AUD';
+  String selectedRate = '?';
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    // getBitcoinData();
+    // updateUI(widget.coinData);
+  }
 
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -28,6 +37,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (value) {
         setState(() {
           selectedCurrency = value;
+          getData(); // update the data!!
         });
         print(selectedCurrency);
       },
@@ -44,10 +54,40 @@ class _PriceScreenState extends State<PriceScreen> {
       // backgroundColor: Colors.lightblue,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+          getData(); // update the data!!
+        });
       },
       children: pickerItems,
     );
+  }
+
+  String bitcoinValue = '?';
+
+  void getData() async {
+    try {
+      String data = await CoinData().getCoinData(selectedCurrency);
+      setState(() {
+        bitcoinValue = data;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+  // void getBitcoinData(String curType) async {
+  //   var coinData1 = await CoinModel().getCoin(curType, selectedCurrency);
+  //   // var coinData2 = await CoinModel().getCoin(currenciesList[1], selectedCurrency);
+  //   // var coinData3 = await CoinModel().getCoin(currenciesList[2], selectedCurrency);
+  //   // print(coinData1);
+  //   print(coinData1['rate']);
+  //   selectedRate = coinData1['rate'].toString();
+  // }
+
+  void updateUI(dynamic coinData) {
+    setState(() {
+      if (coinData == null) {}
+    });
   }
 
   @override
@@ -68,16 +108,20 @@ class _PriceScreenState extends State<PriceScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      '1 ${cryptoList[0]} = $bitcoinValue $selectedCurrency',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
