@@ -15,17 +15,21 @@ const List<String> cryptoList = [
 class CoinData {
   // Future getCoinData(String bitName, String countryName) async {
   Future getCoinData(String selectedCurrency) async {
-    // var requestURL = '$coinAPIURL/$bitName/$countryName?apikey=$apiKey';
-    var requestURL = '$coinAPIURL/BTC/$selectedCurrency?apikey=$apiKey';
-    http.Response response = await http.get(requestURL);
+    Map<String, String> cryptoPrices;
+    for (String crypto in cryptoList) {
+      var requestURL = '$coinAPIURL/$crypto/$selectedCurrency?apikey=$apiKey';
+      http.Response response = await http.get(requestURL);
 
-    if (response.statusCode == 200) {
-      var decodedData = jsonDecode(response.body);
-      double lastPrice = decodedData['rate'];
-      return lastPrice.toStringAsFixed(0);
-    } else {
-      print(response.statusCode);
-      throw 'Problem with the get request';
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        double lastPrice = decodedData['rate'];
+        cryptoPrices[crypto] = lastPrice.toStringAsFixed(0);
+        // return lastPrice.toStringAsFixed(0);
+      } else {
+        print(response.statusCode);
+        throw 'Problem with the get request';
+      }
     }
+    return cryptoPrices;
   }
 }
