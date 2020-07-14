@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -7,25 +8,33 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  // String selectedCurrency = 'USD';
 
-  List<DropdownMenuItem> getDropdownItems() {
-    List<DropdownMenuItem<String>> dropdownItems = [];
+  // List<DropdownMenuItem> getDropdownItems() {
+  //   List<DropdownMenuItem<String>> dropdownItems = [];
+  //   for (String currency in currenciesList) {
+  //     var newItem = DropdownMenuItem(
+  //       child: Text(currency),
+  //       value: currency,
+  //     );
+
+  //     dropdownItems.add(newItem);
+  //   }
+
+  //   return dropdownItems;
+  // }
+
+  List<Text> getPickerItems() {
+    List<Text> pickerItems = []; // 꼭 []; 빈 리스트를 만들어줘야 돼. 걍 pickteritems; 만 하면 안됨
     for (String currency in currenciesList) {
-      var newItem = DropdownMenuItem(
-        child: Text(currency),
-        value: currency,
-      );
-
-      dropdownItems.add(newItem);
+      pickerItems.add(Text(currency));
     }
-
-    return dropdownItems;
+    return pickerItems;
   }
 
   @override
   Widget build(BuildContext context) {
-    getDropdownItems();
+    getPickerItems();
 
     return Scaffold(
       appBar: AppBar(
@@ -61,15 +70,18 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              value: selectedCurrency, //default value to show
-              items: getDropdownItems(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCurrency = value;
-                });
-                print(selectedCurrency);
+            child: CupertinoPicker(
+              // backgroundColor: Colors.lightblue,
+              itemExtent: 32.0,
+              onSelectedItemChanged: (selectedIndex) {
+                print(selectedIndex);
               },
+              children: getPickerItems(),
+              // [
+              //   Text('USD'),
+              //   Text('EUR'),
+              //   Text('GBP'),
+              // ],
             ),
           ),
         ],
@@ -77,3 +89,14 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
+
+// DropdownButton<String>(
+//               value: selectedCurrency, //default value to show
+//               items: getDropdownItems(),
+//               onChanged: (value) {
+//                 setState(() {
+//                   selectedCurrency = value;
+//                 });
+//                 print(selectedCurrency);
+//               },
+//             ),
